@@ -10,7 +10,7 @@ const getTimelineURL = "https://api.tomorrow.io/v4/timelines";
 const apikey = "add your API key here";
 
 // pick the location, as a latlong pair
-let location = [40.758, -73.9855];
+let location = [33.484377, -82.236150];
 
 // list the fields
 const fields = [
