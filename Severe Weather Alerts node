@@ -1,0 +1,57 @@
+const fetch = require("node-fetch");
+
+// set the Alerts POST endpoint as the target URL
+const postAlertsURL = "https://api.tomorrow.io/v4/alerts";
+
+// get your key from app.tomorrow.io/development/keys
+const apikey = "add your API key here";
+
+// choose an insight category, such as fires, winter or temperature
+const insight = "winter";
+
+// specify the name and notification details, later detailed in the webhook payload
+let name = "Winter Weather Hazards";
+
+const notifications = [
+  {
+    type: "PUBLISH",
+    title: "Winter Weather Report",
+    description:
+      "Our sources issued a new hazardeous winter weather announcement. Stay safe.",
+  },
+];
+
+// create a severe weather alert with all the body parameters as options
+const postAlertsParameters = {
+  name,
+  insight,
+  // isActive: true, (default to true)
+  notifications,
+};
+
+fetch(postAlertsURL + "?apikey=" + apikey, {
+  method: "POST",
+  body: JSON.stringify(postAlertsParameters),
+  headers: { 'Content-Type': 'application/json' },
+})
+  .then((res) => res.json())
+  .then((json) => {
+    // set the Alerts Locations Link POST endpoint as the target URL
+    const postAlertsLocationsLinksURL =
+      "https://api.tomorrow.io/v4/alerts/" + json.data.alert.id + "/locations/link";
+  
+  	// name a pre-defined location by its ID
+  	const locationId = "59f35a7f65d7a20007abb096";
+
+  	// link the location to the alert, so it will start monitoring for the weather events
+    fetch(postAlertsLocationsLinksURL + "?apikey=" + apikey, {
+      method: "POST",
+      body: JSON.stringify({
+        locations: [locationId],
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((res) => res.json())
+      .catch((err) => console.error("error: " + err));
+  })
+  .catch((err) => console.error("error: " + err));
